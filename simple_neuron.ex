@@ -35,7 +35,7 @@ defmodule SimpleNeuron do
 						:io.format(" Output: ~p~n", [output])
 				end
 			false ->
-				:io.format("The signal must be alist of length 2~n")
+				:io.format("The signal must be a list of length 2~n")
 		end
 	end
 end
