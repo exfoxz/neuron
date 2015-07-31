@@ -81,6 +81,46 @@ defmodule Constructor do
 	end
 
 	@doc """
+	To create neurons from the same layer,
+	all that is needed are the ids for those neurons
+	a list of input_idps for every neuron so that we can create
+	the proper number of weights and a list of output_ids
+	"""
+	@doc """
+	Creates the input list from the tuples [{id, weights}...]
+	using the vector lengths specified in the placeholder input_idps
+	"""
+	def create_neuron(input_idps, id, cx_id, output_ids) do
+		proper_input_idps = create_neural_input(input_idps, [])	
+		%Neuron{id: id, cx_id: cx_id, af= :math.tanh, input_idps: proper_input_idps, output_ids: output_ids}
+	end
+
+	@doc """
+	Generates random weights in the range of -0.5 to 0.5 together with the input_id, adding the bias
+	to the end of the list
+	"""
+	def create_neural_input([{input_id, input_vl}|input_idps], acc) do
+		weights = create_neural_weights(input_vl, [])
+		create_neural_input(input_idps, [{input_id, weights}|acc])
+	end
+
+	def create_neural_input([], acc) do
+		:lists.reverse([{bias, :random.uniform()-0.5} | acc])
+	end
+
+	@doc """
+	Generates random weights
+	"""
+	def create_neural_weights(0, acc) do
+		acc;
+	end
+
+	def create_neural_weights(index, acc) do
+		w = :random.uniform()-0.5
+		create_neural_weights(index-1, [w | acc])
+	end
+	
+	@doc """
 	Generates the struct encoded genotypical representation of the cortex
 	The Cortex elements needs to know the ids of every Neuron, Sensor
 	and Actuator in the NN
@@ -88,16 +128,4 @@ defmodule Constructor do
 	def create_cortex(cx_id, s_ids, a_ids, n_ids) do
 		%Cortex{id: cx_id, sensor_ids: s_ids, actuator_ids: a_ids, nids: n_ids}
 	end
-	
-
-
-
-
-
-
-
-
-
-
-
 end
